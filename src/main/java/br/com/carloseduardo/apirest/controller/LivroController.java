@@ -1,11 +1,11 @@
 package br.com.carloseduardo.apirest.controller;
 
 
+import br.com.carloseduardo.apirest.controller.dto.LivroRequest;
 import br.com.carloseduardo.apirest.controller.dto.LivroResponse;
+import br.com.carloseduardo.apirest.model.Livro;
 import br.com.carloseduardo.apirest.repository.LivroRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,5 +27,17 @@ public class LivroController {
             .stream()
             .map(LivroResponse::converter)
             .collect(Collectors.toList());
+    }
+    @GetMapping("/{id}")
+    public LivroResponse findById(@PathVariable("id") Long id){
+        var livro = livroRepository.getOne(id);
+        return LivroResponse.converter(livro);
+    }
+    @PostMapping("/")
+    public void saveLivro(@RequestBody LivroRequest livro){
+        var l = new Livro();
+        l.setNome(livro.getNome());
+        l.setAutor(livro.getAutor());
+        livroRepository.save(l);
     }
 }
